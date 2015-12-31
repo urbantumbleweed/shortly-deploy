@@ -5,7 +5,8 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         src: [
-          'public/**/*.js'
+          'public/lib/*.js',
+          'public/client/*.js'
         ],
         dest: 'public/dist/production.js'
       }
@@ -79,9 +80,7 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
-        // push: {
-          command: 'git push azure master'
-        // }
+        command: 'git push azure master'
       }
     },
   });
@@ -128,9 +127,9 @@ module.exports = function(grunt) {
   grunt.registerTask('upload', function(n) {
     if(grunt.option('prod')) {
       // add your production server task here
-      grunt.task.run([ 'server-dev' ]);
-    } else {
       grunt.task.run(['shell'])
+    } else {
+      grunt.task.run([ 'server-dev' ]);
     }
   });
 
