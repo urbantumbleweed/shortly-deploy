@@ -3,6 +3,12 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
+      dist: {
+        src: [
+          'public/**/*.js'
+        ],
+        dest: 'public/dist/production.js'
+      }
     },
 
     mochaTest: {
@@ -21,12 +27,17 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      build: {
+        src: 'public/dist/production.js',
+        dest: 'public/dist/production.min.js'
+      }
     },
 
     jshint: {
-      files: [
-        // Add filespec list here
-      ],
+      uses_defaults: ['public/**/*.js', '*.js', 'app/**/*.js', 'lib/*.js'],
+      // files: {
+      //   // Add filespec list here
+      // },
       options: {
         force: 'true',
         jshintrc: '.jshintrc',
@@ -38,6 +49,15 @@ module.exports = function(grunt) {
     },
 
     cssmin: {
+      target: {
+        files: [{
+          expand: true,
+          cwd: 'public',
+          src: ['*.css'],
+          dest: 'public/dist',
+          ext: '.min.css'
+        }]
+      }
     },
 
     watch: {
@@ -59,6 +79,12 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        push: {
+          command: 'git push azure master'
+        },
+        makeDir: {
+
+        }
       }
     },
   });
@@ -94,11 +120,18 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    // concat the files
+    'jshint',
+    'concat',
+    // uglify the files
+    'uglify',
+    'cssmin'
   ]);
 
   grunt.registerTask('upload', function(n) {
     if(grunt.option('prod')) {
       // add your production server task here
+      grunt.task.run(['shell:prodServer'])
     } else {
       grunt.task.run([ 'server-dev' ]);
     }
@@ -106,7 +139,19 @@ module.exports = function(grunt) {
 
   grunt.registerTask('deploy', [
     // add your deploy tasks here
+    'build', 'test', 'upload:prod'
+    // build
+
   ]);
+
+  grunt.registerTask('default', ['build']);
+// build -> concat, uglify, lint
+// test -> mocha
+// upload -> shell (prod); grunt build
+// build
+// deploy
+// default
+// watch
 
 
 };
