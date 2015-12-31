@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     concat: {
       options: { seperator: ';' },
       dist: {
-        src: ['public/client/**/*.js'],
+        src: ['public/client/*.js'],
         dest: 'public/dist/<%= pkg.name %>.js'
       }
     },
@@ -116,10 +116,10 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', [
     // concat the files
-    'jshint',
     'concat',
     // uglify the files
     'uglify',
+    'jshint',
     'cssmin'
   ]);
 
